@@ -8,19 +8,14 @@
         apply:
           become: true
       vars:
-        - key_size: 4096
-        - passphrase: 
-        - key_type: RSA 
-        - country_name: KE
-        - email_address: admin@srv
-        - organization_name: srv
+        dir: '/vars/main.yaml'
 
     - name: deploy nginx 
       import_role:
         name: deploy_nginx
       become: true
-      vars: 
-        - nginx_port_no_tls: 443
+      vars:
+        dir: '/vars/main.yaml'
       tags: nginx
 
     - name: deploy mariadb 
