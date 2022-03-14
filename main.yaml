@@ -1,0 +1,43 @@
+- name: deploy web-server
+  hosts: test
+  become: false
+  tasks:
+    - name: create certificates 
+      include_role:
+        name: create_certificates
+        apply:
+          become: true
+      vars:
+        - key_size: 4096
+        - passphrase: 
+        - key_type: RSA 
+        - country_name: KE
+        - email_address: admin@srv
+        - organization_name: srv
+
+    - name: deploy nginx 
+      import_role:
+        name: deploy_nginx
+      become: true
+      vars: 
+        - nginx_port_no_tls: 443
+      tags: nginx
+
+    - name: deploy mariadb 
+      import_role:
+        name: deploy_mariadb
+      become: true
+      vars:
+        dir: '/vars/main.yaml'
+      tags: maria
+
+  post_tasks:
+    - name: check web site from control server
+      uri:
+        url: "https://{{ ansible_host }}"
+        validate_certs: false
+        return_content: true
+      register: example_webpage_out
+      failed_when: example_webpage_out.status != 200
+      tags: nginx
+
