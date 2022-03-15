@@ -3,12 +3,13 @@
   become: false
   tasks:
     - name: create certificates 
-      include_role:
+      import_role:
         name: create_certificates
-        apply:
-          become: true
+      become: true
       vars:
         dir: '/vars/main.yaml'
+      tags: nginx
+
 
     - name: deploy nginx 
       import_role:
